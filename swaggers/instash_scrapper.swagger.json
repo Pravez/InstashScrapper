@@ -119,6 +119,42 @@
         ]
       }
     },
+    "/hashtags/{name}/related": {
+      "parameters": [
+        {
+          "name": "name",
+          "in": "path",
+          "required": true,
+          "type": "string"
+        }
+      ],
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/BaseHashtag"
+              }
+            }
+          }
+        },
+        "operationId": "get_related_hashtags",
+        "parameters": [
+          {
+            "name": "X-Fields",
+            "in": "header",
+            "type": "string",
+            "format": "mask",
+            "description": "An optional fields mask"
+          }
+        ],
+        "tags": [
+          "default"
+        ]
+      }
+    },
     "/login": {
       "post": {
         "responses": {
@@ -127,6 +163,24 @@
           }
         },
         "operationId": "post_login",
+        "parameters": [
+          {
+            "name": "username",
+            "in": "formData",
+            "type": "string",
+            "required": true
+          },
+          {
+            "name": "password",
+            "in": "formData",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "consumes": [
+          "application/x-www-form-urlencoded",
+          "multipart/form-data"
+        ],
         "tags": [
           "default"
         ]
@@ -171,6 +225,20 @@
         "time": {
           "type": "string",
           "format": "date-time"
+        },
+        "name": {
+          "type": "string"
+        },
+        "media_count": {
+          "type": "integer"
+        }
+      },
+      "type": "object"
+    },
+    "BaseHashtag": {
+      "properties": {
+        "id": {
+          "type": "integer"
         },
         "name": {
           "type": "string"
