@@ -1,6 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:instash_scrapper/features/auth/provider.dart';
 import 'package:instash_scrapper/features/home/hashtag_list/hashtag_list_provider.dart';
 import 'package:instash_scrapper/app/router.dart';
 
@@ -16,8 +17,14 @@ class AppSkeletonPage extends ConsumerWidget {
       ),
       appBarBuilder: (context, tabsRouter) => AppBar(
         title: const Text("InstashScrapper"),
+        actions: [
+          IconButton(onPressed: () {
+            //TODO
+          }, icon: const Icon(Icons.logout))
+        ],
       ),
-      routes: const [HomeRoute(), SearchRoute()],
+
+      routes: [HomeRoute(), SearchRoute()],
       bottomNavigationBuilder: (_, tabsRouter) {
         return BottomNavigationBar(
           currentIndex: tabsRouter.activeIndex,

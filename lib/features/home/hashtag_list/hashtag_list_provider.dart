@@ -10,7 +10,7 @@ final hashtagListProvider =
 
 class HashtagListProvider extends StateNotifier<HashtagListState> {
   HashtagListProvider(this.ref, [List<HashtagToCheck>? initial])
-      : super(const HashtagListState.loading());
+      : super(const HashtagListState.done([]));
 
   final Ref ref;
 
@@ -18,7 +18,16 @@ class HashtagListProvider extends StateNotifier<HashtagListState> {
     final client = ref.read(apiProvider);
     client.checksGet().asStream().mapNotNull((e) => e.body).first.then((value) {
       state = HashtagListState.done(value);
-      print(value);
     });
+  }
+
+  void addHashtag(String name) {
+    state = const HashtagListState.loading();
+    final client = ref.read(apiProvider);
+    client
+        .checksNamePost(name: name)
+        .asStream()
+        .first
+        .then((value) => refresh());
   }
 }

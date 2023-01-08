@@ -11,9 +11,12 @@ class HashtagsListView extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final source = HashtagDataSource(data);
+
     return SfDataGrid(
         source: source,
         columnWidthMode: ColumnWidthMode.fill,
+        showSortNumbers: true,
+        allowSorting: true,
         columns: [
           GridColumn(
               columnName: 'name',

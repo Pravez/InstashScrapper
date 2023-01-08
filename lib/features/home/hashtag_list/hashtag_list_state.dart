@@ -6,9 +6,9 @@ part 'hashtag_list_state.freezed.dart';
 
 @freezed
 class HashtagListState with _$HashtagListState {
-  const factory HashtagListState.loading() = _Loading;
+  const factory HashtagListState.loading() = HashtagListLoading;
 
-  const factory HashtagListState.done(List<HashtagToCheck> hashtags) = _Done;
+  const factory HashtagListState.done(List<HashtagToCheck> hashtags) = HashtagListDone;
 
-  const factory HashtagListState.error(AppException error) = _Error;
+  const factory HashtagListState.error(AppException error) = HashtagListStateError;
 }
