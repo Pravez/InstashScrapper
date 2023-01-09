@@ -22,7 +22,7 @@ dependencies:
   supercharged: ^2.1.1
   freezed: ^2.3.2
   hooks_riverpod: ^2.1.3
-  syncfusion_flutter_datagrid: ^20.4.42
+  pluto_grid: ^5.4.9
   auto_route: ^5.0.4
   intl: ^0.17.0
 

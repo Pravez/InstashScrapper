@@ -30,7 +30,7 @@ class HomePage extends HookConsumerWidget {
                     loading: () => const CircularProgressIndicator(),
                     done: (_) => const Icon(Icons.search),
                     error: (err) => const Icon(Icons.error_outline)))),
-        _widgetContent(context, ref)
+        HashtagsListView()
       ],
     );
   }
@@ -39,20 +39,5 @@ class HomePage extends HookConsumerWidget {
     if (ref.read(hashtagListProvider) is! HashtagListLoading) {
       ref.read(hashtagListProvider.notifier).addHashtag(value);
     }
-  }
-
-  Widget _widgetShimmer(BuildContext context, WidgetRef ref) {
-    return const Center(
-      child: CircularProgressIndicator(),
-    );
-  }
-
-  Widget _widgetContent(BuildContext context, WidgetRef ref) {
-    final state = ref.watch(hashtagListProvider);
-
-    return state.when(
-        loading: () => _widgetShimmer(context, ref),
-        done: (hashtags) => HashtagsListView(hashtags),
-        error: (AppException error) => _widgetShimmer(context, ref));
   }
 }

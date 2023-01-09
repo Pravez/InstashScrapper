@@ -1,6 +1,6 @@
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:instash_scrapper/api/instash_scrapper.swagger.dart';
-import 'package:instash_scrapper/shared/api/provider.dart';
+import 'package:instash_scrapper/shared/api_provider.dart';
 
 import 'state.dart';
 

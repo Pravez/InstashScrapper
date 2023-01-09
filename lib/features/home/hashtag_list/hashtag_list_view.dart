@@ -1,72 +1,55 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:instash_scrapper/api/instash_scrapper.swagger.dart';
-import 'package:syncfusion_flutter_datagrid/datagrid.dart';
+import 'package:instash_scrapper/features/home/hashtag_list/hashtag_list_provider.dart';
+import 'package:instash_scrapper/shared/api_provider.dart';
+import 'package:pluto_grid/pluto_grid.dart';
+
+final rowProvider = StateProvider<Set<HashtagToCheck>>((ref) {
+  final listProvider = ref.watch(hashtagListProvider);
+
+  return listProvider
+      .map((e) => PlutoRow(cells: {
+            'name': PlutoCell(value: e.name),
+            'media_count': PlutoCell(value: e.mediaCount),
+            'last_check': PlutoCell(value: e.lastCheck)
+          }))
+      .toList();
+});
 
 class HashtagsListView extends HookConsumerWidget {
-  const HashtagsListView(this.data, {super.key});
+  HashtagsListView({super.key});
 
-  final List<HashtagToCheck> data;
+  final List<PlutoColumn> columns = [
+    PlutoColumn(title: "Name", field: "name", type: PlutoColumnType.text()),
+    PlutoColumn(
+        title: "Media Count",
+        field: "media_count",
+        type: PlutoColumnType.number(),
+        enableSorting: true),
+    PlutoColumn(
+        title: "Last check", field: "last_check", type: PlutoColumnType.date())
+  ];
+
+  late final PlutoGridStateManager stateManager;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final source = HashtagDataSource(data);
+    final rows = ref.watch(rowProvider);
 
-    return SfDataGrid(
-        source: source,
-        columnWidthMode: ColumnWidthMode.fill,
-        showSortNumbers: true,
-        allowSorting: true,
-        columns: [
-          GridColumn(
-              columnName: 'name',
-              label: Container(
-                  padding: const EdgeInsets.all(16.0),
-                  alignment: Alignment.centerLeft,
-                  child: const Text('Name'))),
-          GridColumn(
-              columnName: 'lastCheck',
-              label: Container(
-                  padding: const EdgeInsets.all(16.0),
-                  alignment: Alignment.centerLeft,
-                  child: const Text('Last Check'))),
-          GridColumn(
-              columnName: 'mediaCount',
-              label: Container(
-                  padding: const EdgeInsets.all(16.0),
-                  alignment: Alignment.centerLeft,
-                  child: const Text('Media Count'))),
-        ]);
-  }
-}
-
-class HashtagDataSource extends DataGridSource {
-  HashtagDataSource(List<HashtagToCheck> data) {
-    _hashtags = data
-        .map((e) => DataGridRow(cells: [
-              DataGridCell<String>(columnName: 'name', value: e.name),
-              DataGridCell<String>(
-                  columnName: 'lastCheck',
-                  value: e.lastCheck?.toIso8601String()),
-              DataGridCell<int>(columnName: 'mediaCount', value: e.mediaCount)
-            ]))
-        .toList();
-  }
-
-  List<DataGridRow> _hashtags = [];
-
-  @override
-  List<DataGridRow> get rows => _hashtags;
-
-  @override
-  DataGridRowAdapter? buildRow(DataGridRow row) {
-    return DataGridRowAdapter(
-        cells: row
-            .getCells()
-            .map((e) => Container(
-                  padding: const EdgeInsets.all(15.0),
-                  child: Text(e.value.toString()),
-                ))
-            .toList());
+    return Expanded(
+      child: PlutoGrid(
+        columns: columns,
+        rows: rows,
+        onLoaded: (event) {
+          stateManager = event.stateManager;
+        },
+        configuration: const PlutoGridConfiguration(
+            columnSize: PlutoGridColumnSizeConfig(
+                autoSizeMode: PlutoAutoSizeMode.equal,
+                resizeMode: PlutoResizeMode.pushAndPull)),
+        onChanged: (event) => print(event),
+      ),
+    );
   }
 }
