@@ -2,24 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:instash_scrapper/api/instash_scrapper.swagger.dart';
 import 'package:instash_scrapper/features/home/hashtag_list/hashtag_list_provider.dart';
-import 'package:instash_scrapper/shared/api_provider.dart';
+import 'package:instash_scrapper/shared/loading_state.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 
-final rowProvider = StateProvider<Set<HashtagToCheck>>((ref) {
-  final listProvider = ref.watch(hashtagListProvider);
+class HashtagsListView extends ConsumerStatefulWidget {
+  const HashtagsListView({super.key});
 
-  return listProvider
-      .map((e) => PlutoRow(cells: {
-            'name': PlutoCell(value: e.name),
-            'media_count': PlutoCell(value: e.mediaCount),
-            'last_check': PlutoCell(value: e.lastCheck)
-          }))
-      .toList();
-});
+  @override
+  HashtagsListViewState createState() => HashtagsListViewState();
+}
 
-class HashtagsListView extends HookConsumerWidget {
-  HashtagsListView({super.key});
-
+class HashtagsListViewState extends ConsumerState<HashtagsListView> {
   final List<PlutoColumn> columns = [
     PlutoColumn(title: "Name", field: "name", type: PlutoColumnType.text()),
     PlutoColumn(
@@ -31,16 +24,21 @@ class HashtagsListView extends HookConsumerWidget {
         title: "Last check", field: "last_check", type: PlutoColumnType.date())
   ];
 
-  late final PlutoGridStateManager stateManager;
+  PlutoGridStateManager? stateManager;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final rows = ref.watch(rowProvider);
+  Widget build(BuildContext context) {
+    final hashtags = ref.watch(hashtagListProvider).hashtags;
+    final loading = ref.watch(hashtagListProvider).loading;
+
+    if (loading is! LoadingState) {
+      updateRows(hashtags);
+    }
 
     return Expanded(
       child: PlutoGrid(
         columns: columns,
-        rows: rows,
+        rows: [],
         onLoaded: (event) {
           stateManager = event.stateManager;
         },
@@ -48,8 +46,20 @@ class HashtagsListView extends HookConsumerWidget {
             columnSize: PlutoGridColumnSizeConfig(
                 autoSizeMode: PlutoAutoSizeMode.equal,
                 resizeMode: PlutoResizeMode.pushAndPull)),
-        onChanged: (event) => print(event),
       ),
     );
+  }
+
+  updateRows(List<HashtagToCheck> data) {
+    if (stateManager != null) {
+      stateManager!.removeAllRows();
+      stateManager!.appendRows(data
+          .map((e) => PlutoRow(cells: {
+                'name': PlutoCell(value: e.name),
+                'media_count': PlutoCell(value: e.mediaCount),
+                'last_check': PlutoCell(value: e.lastCheck)
+              }))
+          .toList());
+    }
   }
 }

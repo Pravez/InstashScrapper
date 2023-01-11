@@ -1,42 +1,41 @@
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:instash_scrapper/api/instash_scrapper.swagger.dart';
 import 'package:instash_scrapper/features/home/hashtag_list/hashtag_list_state.dart';
 import 'package:instash_scrapper/shared/api_provider.dart';
-import 'package:instash_scrapper/shared/store_notifier.dart';
-import 'package:rxdart/rxdart.dart';
+import 'package:instash_scrapper/shared/loading_state.dart';
 
 final hashtagListProvider =
-    StateNotifierProvider<HashtagListProvider, HashtagListState>(
-        (ref) => HashtagListProvider(ref));
+    StateNotifierProvider<HashtagListNotifier, HashtagListState>(
+        (ref) => HashtagListNotifier(ref));
 
-final hashtagStoreProvider =
-    StateNotifierProvider<StoreNotifier<HashtagToCheck>, Set<HashtagToCheck>>(
-        (ref) {
-  final store = StoreNotifier<HashtagToCheck>();
-
-  ref.listen(hashtagListProvider, (previous, next) {
-    next.maybeWhen(done: (data) => store.addAll(data), orElse: () {});
-  });
-
-  return store;
-});
-
-class HashtagListProvider extends StateNotifier<HashtagListState> {
-  HashtagListProvider(this.ref, [List<HashtagToCheck>? initial])
-      : super(const HashtagListState.done([]));
+class HashtagListNotifier extends StateNotifier<HashtagListState> {
+  HashtagListNotifier(this.ref) : super(const HashtagListState()) {
+    refresh();
+  }
 
   final Ref ref;
 
-  void refresh() {
-    final client = ref.read(apiProvider);
-    client.checksGet().asStream().mapNotNull((e) => e.body).first.then((value) {
-      state = HashtagListState.done(value);
-    });
+  void refresh() async {
+    state = state.copyWith(loading: const Loading.loading());
+    final hashtags = await ref
+        .read(apiProvider)
+        .checksGet()
+        .asStream()
+        .map((e) => e.body)
+        .first;
+    state = state.copyWith(
+        hashtags: hashtags ?? state.hashtags, loading: const Loading.ok());
   }
 
-  void addHashtag(String name) {
-    state = const HashtagListState.loading();
+  Future<int> addHashtag(String name) async {
     final client = ref.read(apiProvider);
-    client.checksNamePost(name: name).then((value) => refresh());
+    state = state.copyWith(loading: const Loading.loading());
+    final result = await client.checksNamePost(name: name);
+    if (result.isSuccessful && result.body != null) {
+      refresh();
+    } else {
+      state = state.copyWith(loading: Loading.error(result.base.statusCode));
+    }
+
+    return result.statusCode;
   }
 }
