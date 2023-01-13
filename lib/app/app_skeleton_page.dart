@@ -2,7 +2,6 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:instash_scrapper/app/router.dart';
-import 'package:instash_scrapper/features/home/hashtag_list/hashtag_list_provider.dart';
 
 class AppSkeletonPage extends ConsumerWidget {
   const AppSkeletonPage({super.key});
@@ -10,21 +9,17 @@ class AppSkeletonPage extends ConsumerWidget {
   @override
   Widget build(context, WidgetRef ref) {
     return AutoTabsScaffold(
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => ref.read(hashtagListProvider.notifier).refresh(),
-        child: const Icon(Icons.refresh),
-      ),
       appBarBuilder: (context, tabsRouter) => AppBar(
         title: const Text("InstashScrapper"),
         actions: [
           IconButton(
               onPressed: () {
-                //TODO
+                AutoRouter.of(context).pushNamed("/settings");
               },
-              icon: const Icon(Icons.logout))
+              icon: const Icon(Icons.settings))
         ],
       ),
-      routes: [HomeRoute(), SearchRoute()],
+      routes: const [HomeRoute(), SearchRoute()],
       bottomNavigationBuilder: (_, tabsRouter) {
         return BottomNavigationBar(
           currentIndex: tabsRouter.activeIndex,

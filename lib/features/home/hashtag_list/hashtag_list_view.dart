@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:instash_scrapper/api/instash_scrapper.swagger.dart';
 import 'package:instash_scrapper/features/home/hashtag_list/hashtag_list_provider.dart';
+import 'package:instash_scrapper/features/home/provider.dart';
 import 'package:instash_scrapper/shared/loading_state.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 
@@ -14,7 +15,12 @@ class HashtagsListView extends ConsumerStatefulWidget {
 
 class HashtagsListViewState extends ConsumerState<HashtagsListView> {
   final List<PlutoColumn> columns = [
-    PlutoColumn(title: "Name", field: "name", type: PlutoColumnType.text()),
+    PlutoColumn(
+        title: "Name",
+        field: "name",
+        type: PlutoColumnType.text(),
+        enableRowChecked: true,
+        enableEditingMode: false),
     PlutoColumn(
         title: "Media Count",
         field: "media_count",
@@ -41,6 +47,17 @@ class HashtagsListViewState extends ConsumerState<HashtagsListView> {
         rows: [],
         onLoaded: (event) {
           stateManager = event.stateManager;
+        },
+        onRowChecked: (e) {
+          if (e.row != null && e.isChecked != null) {
+            if (e.isChecked!) {
+              ref
+                  .read(selectionProvider.notifier)
+                  .update((state) => [...state, e.row!]);
+            } else {
+              ref.read(selectionProvider.notifier).state.remove(e.row!);
+            }
+          }
         },
         configuration: const PlutoGridConfiguration(
             columnSize: PlutoGridColumnSizeConfig(

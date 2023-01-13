@@ -29,13 +29,19 @@ class HashtagListNotifier extends StateNotifier<HashtagListState> {
   Future<int> addHashtag(String name) async {
     final client = ref.read(apiProvider);
     state = state.copyWith(loading: const Loading.loading());
-    final result = await client.checksNamePost(name: name);
-    if (result.isSuccessful && result.body != null) {
-      refresh();
-    } else {
-      state = state.copyWith(loading: Loading.error(result.base.statusCode));
-    }
+    try {
+      final result = await client.checksNamePost(name: name);
+      if (result.isSuccessful && result.body != null) {
+        refresh();
+      } else {
+        state = state.copyWith(loading: Loading.error(result.base.statusCode));
+      }
 
-    return result.statusCode;
+      return result.statusCode;
+    } catch (error) {
+      state = state.copyWith(loading: Loading.error(error));
+
+      return Future.error("Connection refused");
+    }
   }
 }

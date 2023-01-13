@@ -7,7 +7,8 @@ import 'package:instash_scrapper/features/home/home_page.dart';
 import 'package:instash_scrapper/features/home/routes.dart';
 import 'package:instash_scrapper/features/search/routes.dart';
 import 'package:instash_scrapper/features/search/search_page.dart';
-
+import 'package:instash_scrapper/features/settings/routes.dart';
+import 'package:instash_scrapper/features/settings/settings_page.dart';
 
 part 'router.gr.dart';
 
@@ -17,6 +18,7 @@ part 'router.gr.dart';
       page: AppSkeletonPage,
       children: [homeRoute, searchRoute],
       initial: true),
-  signInRouter
+  signInRouter,
+  settingsRouter
 ])
 class AppRouter extends _$AppRouter {}

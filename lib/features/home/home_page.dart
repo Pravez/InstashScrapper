@@ -18,21 +18,21 @@ class HomePage extends HookConsumerWidget {
             onSubmitted: (value) => onSubmit(context, value, ref),
             cursorColor: Colors.grey,
             decoration: InputDecoration(
-                fillColor: Colors.white,
+                fillColor: loading.when(
+                    loading: () => Colors.grey,
+                    ok: () => Colors.white,
+                    error: (_) => Colors.red),
                 filled: true,
-                border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                    borderSide: BorderSide.none),
+                border: OutlineInputBorder(borderSide: BorderSide.none),
                 hintText: 'Ajouter un hashtag ...',
                 hintStyle: const TextStyle(color: Colors.grey, fontSize: 18),
                 prefixIcon: loading.when(
                     loading: () => Container(
-                          padding: const EdgeInsets.all(15.0),
                           child: const CircularProgressIndicator(),
                         ),
                     ok: () => const Icon(Icons.search),
                     error: (_) => const Icon(Icons.error)))),
-        HashtagsListView()
+        const HashtagsListView()
       ],
     );
   }
@@ -44,6 +44,9 @@ class HomePage extends HookConsumerWidget {
           ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text("An error occured ($code)")));
         }
+      }).onError((error, stackTrace) {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text("An error occured : $error")));
       });
     }
   }
