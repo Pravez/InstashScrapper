@@ -6,7 +6,8 @@ part 'state.freezed.dart';
 @freezed
 class AuthState with _$AuthState {
   const factory AuthState.initial() = _Initial;
-  const factory AuthState.loading() = _Loading;
-  const factory AuthState.loggedIn() = _LoggedIn;
+  const factory AuthState.loading() = AuthLoading;
+  const factory AuthState.loggedIn() = AuthLoggedIn;
+  const factory AuthState.notLoggedIn() = AuthNotLoggedIn;
   const factory AuthState.error(AppException error) = _Error;
 }

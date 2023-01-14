@@ -23,13 +23,11 @@ class HomePage extends HookConsumerWidget {
                     ok: () => Colors.white,
                     error: (_) => Colors.red),
                 filled: true,
-                border: OutlineInputBorder(borderSide: BorderSide.none),
+                border: const OutlineInputBorder(borderSide: BorderSide.none),
                 hintText: 'Ajouter un hashtag ...',
                 hintStyle: const TextStyle(color: Colors.grey, fontSize: 18),
                 prefixIcon: loading.when(
-                    loading: () => Container(
-                          child: const CircularProgressIndicator(),
-                        ),
+                    loading: () => const CircularProgressIndicator(),
                     ok: () => const Icon(Icons.search),
                     error: (_) => const Icon(Icons.error)))),
         const HashtagsListView()

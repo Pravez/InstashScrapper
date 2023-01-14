@@ -1,18 +1,9 @@
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:instash_scrapper/api/instash_scrapper.swagger.dart';
-
-final apiUrlProvider = StateNotifierProvider<ApiUrlProvider, String>((ref) => ApiUrlProvider());
-
-class ApiUrlProvider extends StateNotifier<String> {
-  ApiUrlProvider() : super("http://localhost:5000");
-
-  update(String uri) {
-    state = uri;
-  }
-}
+import 'package:instash_scrapper/features/settings/provider.dart';
 
 final apiProvider = Provider((ref) {
-  final uri = ref.watch(apiUrlProvider);
+  final settings = ref.watch(settingsProvider);
 
-  return InstashScrapper.create(baseUrl: Uri.tryParse(uri));
+  return InstashScrapper.create(baseUrl: Uri.tryParse(settings.serverAddress));
 });

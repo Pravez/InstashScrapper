@@ -8,7 +8,9 @@ class AppException with _$AppException {
 
   const factory AppException.unauthorized() = AppExceptionUnauthorized;
 
+  const factory AppException.forbidden() = AppExceptionForbidden;
+
   const factory AppException.errorWithMessage(String message) =
-  _AppExceptionErrorMessage;
+      _AppExceptionErrorMessage;
   const factory AppException.error() = _AppExceptionError;
 }

@@ -6,9 +6,8 @@ class SearchPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-
-    return Center(
-      child: const Text("haha"),
+    return const Center(
+      child: Text("haha"),
     );
   }
 }

@@ -12,7 +12,10 @@ analyzer:
 
   exclude:
     - "**/*.g.dart"
+    - "**/*.gr.dart"
     - "**/*.freezed.dart"
+    - "**/*.swagger.dart"
+    - "**/*.chopper.dart"
   strong-mode:
     implicit-casts: true
     implicit-dynamic: true

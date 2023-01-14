@@ -1,6 +1,7 @@
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:instash_scrapper/api/instash_scrapper.swagger.dart';
 import 'package:instash_scrapper/shared/api_provider.dart';
+import 'package:instash_scrapper/shared/app_exception.dart';
 
 import 'state.dart';
 
@@ -12,7 +13,8 @@ abstract class AuthRepositoryProtocol {
 
 final authRepositoryProvider = Provider((ref) {
   final client = ref.watch(apiProvider);
-  AuthRepository(client);
+
+  return AuthRepository(client);
 });
 
 class AuthRepository implements AuthRepositoryProtocol {
@@ -23,11 +25,11 @@ class AuthRepository implements AuthRepositoryProtocol {
   @override
   Future<AuthState> signIn(String username, String password) async {
     return _client
-        .loginPost(username: username, password: password)
+        .loginPost(payload: {"username": username, "password": password})
         .asStream()
-        .map((event) => event.isSuccessful && event.body["status"] == true
+        .map((event) => event.isSuccessful && event.body!.status!
             ? const AuthState.loggedIn()
-            : AuthState.error(event.body))
+            : const AuthState.error(AppException.unauthorized()))
         .first;
   }
 
@@ -36,9 +38,9 @@ class AuthRepository implements AuthRepositoryProtocol {
     return _client
         .statusGet()
         .asStream()
-        .map((event) => event.isSuccessful && event.body["status"] == true
+        .map((event) => event.isSuccessful && event.body!.loggedIn!
             ? const AuthState.loggedIn()
-            : AuthState.error(event.body))
+            : const AuthState.error(AppException.unauthorized()))
         .first;
   }
 }

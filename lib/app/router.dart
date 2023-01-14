@@ -1,24 +1,34 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:instash_scrapper/app/app_skeleton_page.dart';
-import 'package:instash_scrapper/features/auth/routes.dart';
+import 'package:instash_scrapper/app/loading_page.dart';
 import 'package:instash_scrapper/features/auth/sign_in_page.dart';
 import 'package:instash_scrapper/features/home/home_page.dart';
-import 'package:instash_scrapper/features/home/routes.dart';
-import 'package:instash_scrapper/features/search/routes.dart';
 import 'package:instash_scrapper/features/search/search_page.dart';
-import 'package:instash_scrapper/features/settings/routes.dart';
 import 'package:instash_scrapper/features/settings/settings_page.dart';
+
+import 'app_start.dart';
 
 part 'router.gr.dart';
 
+class AppRouteObserver extends AutoRouterObserver {
+  @override
+  void didPush(Route route, Route? previousRoute) {
+    print("Pushed route : $route (previous was : $previousRoute");
+  }
+}
+
 @MaterialAutoRouter(replaceInRouteName: "Page,Route", routes: [
   AutoRoute(
-      path: '/main',
-      page: AppSkeletonPage,
-      children: [homeRoute, searchRoute],
-      initial: true),
-  signInRouter,
-  settingsRouter
+    path: '/main',
+    page: AppSkeletonPage,
+    children: [
+      AutoRoute(path: 'home', page: HomePage),
+      AutoRoute(path: 'search', page: SearchPage)
+    ],
+  ),
+  AutoRoute(path: '/signIn', page: SignInPage),
+  AutoRoute(path: '/settings', page: SettingsPage),
+  AutoRoute(path: '/', page: AppStartPage, initial: true)
 ])
 class AppRouter extends _$AppRouter {}

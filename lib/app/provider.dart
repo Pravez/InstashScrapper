@@ -1,4 +1,4 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:instash_scrapper/features/auth/provider.dart';
 import 'package:instash_scrapper/features/auth/state.dart';
 import 'package:instash_scrapper/features/home/provider.dart';
@@ -11,8 +11,7 @@ final appStartProvider =
   final loginState = ref.watch(authProvider);
   final homeState = ref.watch(homeProvider);
 
-  late AppState appState;
-  appState = loginState is AppAuthenticated
+  final appState = loginState is AppAuthenticated
       ? const AppState.authenticated()
       : const AppState.initial();
 
@@ -32,7 +31,9 @@ class AppStateNotifier extends StateNotifier<AppState> {
 
   void _init() async {
     _authState.maybeWhen(
-        loggedIn: () => state = const AppState.authenticated(), orElse: () {});
+        loggedIn: () => state = const AppState.authenticated(),
+        notLoggedIn: () => state = const AppState.authenticated(),
+        orElse: () {});
 
     _homeState.maybeWhen(
         loggedOut: () => state = const AppState.unauthenticated(),

@@ -44,7 +44,7 @@ class HashtagsListViewState extends ConsumerState<HashtagsListView> {
     return Expanded(
       child: PlutoGrid(
         columns: columns,
-        rows: [],
+        rows: List<PlutoRow>.empty(),
         onLoaded: (event) {
           stateManager = event.stateManager;
         },

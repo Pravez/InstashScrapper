@@ -1,7 +1,9 @@
-import 'package:flutter/material.dart';
+import 'package:auto_route/auto_route.dart';
+import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:instash_scrapper/l10n/l10n.dart';
+import 'package:get_it/get_it.dart';
 import 'package:instash_scrapper/app/router.dart';
+import 'package:instash_scrapper/l10n/l10n.dart';
 
 class App extends StatelessWidget {
   App({Key? key}) : super(key: key);
@@ -10,14 +12,13 @@ class App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp.router(
+    return FluentApp.router(
       theme: ThemeData(
-        appBarTheme: const AppBarTheme(color: Color(0xFF13B9FF)),
-        colorScheme: ColorScheme.fromSwatch(
-          accentColor: const Color(0xFF13B9FF),
-        ),
-      ),
-      routerDelegate: _router.delegate(),
+          accentColor: Colors.blue,
+          visualDensity: VisualDensity.standard,
+          focusTheme: const FocusThemeData(glowFactor: 0.0)),
+      routerDelegate: AutoRouterDelegate(GetIt.I.get<AppRouter>(),
+          navigatorObservers: () => [AppRouteObserver()]),
       routeInformationProvider: _router.routeInfoProvider(),
       routeInformationParser: _router.defaultRouteParser(),
       localizationsDelegates: const [
@@ -25,6 +26,7 @@ class App extends StatelessWidget {
         GlobalMaterialLocalizations.delegate,
       ],
       supportedLocales: AppLocalizations.supportedLocales,
+      color: Colors.blue,
     );
   }
 }
