@@ -8,38 +8,32 @@ import 'state.dart';
 
 final appStartProvider =
     StateNotifierProvider<AppStateNotifier, AppState>((ref) {
-  final loginState = ref.watch(authProvider);
-  final homeState = ref.watch(homeProvider);
-
-  final appState = loginState is AppAuthenticated
-      ? const AppState.authenticated()
-      : const AppState.initial();
-
-  return AppStateNotifier(appState, ref, loginState, homeState);
+  return AppStateNotifier(ref);
 });
 
 class AppStateNotifier extends StateNotifier<AppState> {
-  final AuthState _authState;
-  final HomeState _homeState;
   final Ref _ref;
 
-  AppStateNotifier(
-      AppState appState, this._ref, this._authState, this._homeState)
-      : super(appState) {
+  AppStateNotifier(this._ref) : super(const AppState.initial()) {
     _init();
   }
 
   void _init() async {
-    _authState.maybeWhen(
-        loggedIn: () => state = const AppState.authenticated(),
-        notLoggedIn: () => state = const AppState.authenticated(),
-        orElse: () {});
+    _ref.listen(
+        homeProvider,
+        (previous, next) => next.maybeWhen(
+            loggedOut: () => state = const AppState.unauthenticated(),
+            orElse: () {}));
 
-    _homeState.maybeWhen(
-        loggedOut: () => state = const AppState.unauthenticated(),
-        orElse: () {});
+    _ref.listen(
+        authProvider,
+        (previous, next) => next.maybeWhen(
+            loggedIn: () => state = const AppState.authenticated(),
+            notLoggedIn: () => state = const AppState.authenticated(),
+            orElse: () {}));
 
     state = const AppState.unauthenticated();
     _ref.read(authProvider.notifier).check();
+    print("prout");
   }
 }

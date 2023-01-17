@@ -17,17 +17,20 @@ class AuthProvider extends StateNotifier<AuthState> {
 
   Future<AppException?> signIn(String email, String password) async {
     state = const AuthState.loading();
-    state = await _authRepository.signIn(email, password);
 
-    return state.maybeWhen(
-        error: (err) => Future.error(err), orElse: () => Future.value(null));
+    return _authRepository.signIn(email, password).then((value) {
+      state = value;
+
+      return value.maybeWhen(
+          error: (err) => Future.error(err), orElse: () => Future.value(null));
+    });
   }
 
   ignoreSignIn() {
     state = const AuthState.notLoggedIn();
   }
 
-  Future<void> check() async {
+  check() async {
     state = await _authRepository.check();
   }
 }

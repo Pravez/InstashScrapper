@@ -18,6 +18,7 @@ class HomeProvider extends StateNotifier<HomeState> {
     _ref.listen(authProvider, (previous, next) {
       next.maybeWhen(
           loggedIn: () => _ref.read(hashtagListProvider.notifier).refresh(),
+          notLoggedIn: () => _ref.read(hashtagListProvider.notifier).refresh(),
           orElse: () {});
     });
   }
