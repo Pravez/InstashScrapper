@@ -1,4 +1,7 @@
+import 'package:auto_route/auto_route.dart';
+import 'package:get_it/get_it.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:instash_scrapper/app/router.dart';
 import 'package:instash_scrapper/shared/app_exception.dart';
 
 import 'repository.dart';
@@ -26,8 +29,10 @@ class AuthProvider extends StateNotifier<AuthState> {
     });
   }
 
-  ignoreSignIn() {
+  Future<void> ignoreSignIn() {
     state = const AuthState.notLoggedIn();
+
+    return Future.value(null);
   }
 
   check() async {

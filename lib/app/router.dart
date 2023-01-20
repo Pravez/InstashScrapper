@@ -7,8 +7,6 @@ import 'package:instash_scrapper/features/home/home_page.dart';
 import 'package:instash_scrapper/features/search/search_page.dart';
 import 'package:instash_scrapper/features/settings/settings_page.dart';
 
-import 'app_start.dart';
-
 part 'router.gr.dart';
 
 class AppRouteObserver extends AutoRouterObserver {
@@ -19,16 +17,8 @@ class AppRouteObserver extends AutoRouterObserver {
 }
 
 @MaterialAutoRouter(replaceInRouteName: "Page,Route", routes: [
-  AutoRoute(
-    path: '/main',
-    page: AppSkeletonPage,
-    children: [
-      AutoRoute(path: 'home', page: HomePage),
-      AutoRoute(path: 'search', page: SearchPage)
-    ],
-  ),
-  AutoRoute(path: '/signIn', page: SignInPage),
+  AutoRoute(path: '/main', page: AppSkeletonPage),
+  AutoRoute(path: '/signIn', page: SignInPage, initial: true),
   AutoRoute(path: '/settings', page: SettingsPage),
-  AutoRoute(path: '/', page: AppStartPage, initial: true)
 ])
 class AppRouter extends _$AppRouter {}

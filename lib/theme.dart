@@ -67,6 +67,12 @@ class AppTheme extends ChangeNotifier {
     _locale = locale;
     notifyListeners();
   }
+
+  @override
+  String toString() {
+    // TODO: implement toString
+    return "AppTheme (mode: $mode)";
+  }
 }
 
 AccentColor get systemAccentColor {

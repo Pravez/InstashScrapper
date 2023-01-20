@@ -12,7 +12,7 @@ final themeProvider = StateProvider<AppTheme>((ref) => AppTheme());
 class App extends HookConsumerWidget {
   App({Key? key}) : super(key: key);
 
-  final _router = AppRouter();
+  final _router = GetIt.I.get<AppRouter>();
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -31,8 +31,9 @@ class App extends HookConsumerWidget {
           glowFactor: is10footScreen() ? 2.0 : 0.0,
         ),
       ),
+      themeMode: theme.mode,
       locale: theme.locale,
-      routerDelegate: AutoRouterDelegate(GetIt.I.get<AppRouter>(),
+      routerDelegate: AutoRouterDelegate(_router,
           navigatorObservers: () => [AppRouteObserver()]),
       routeInformationProvider: _router.routeInfoProvider(),
       routeInformationParser: _router.defaultRouteParser(),

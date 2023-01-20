@@ -13,6 +13,7 @@ class AppNavigation extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = FluentTheme.of(context);
+    final themeState = ref.watch(themeProvider);
 
     return NavigationView(
         appBar: NavigationAppBar(
@@ -34,7 +35,7 @@ class AppNavigation extends ConsumerWidget {
                 Padding(
                   padding: const EdgeInsetsDirectional.only(end: 8.0),
                   child: ToggleSwitch(
-                      checked: FluentTheme.of(context).brightness.isDark,
+                      checked: themeState.mode == ThemeMode.dark,
                       onChanged: (v) {
                         if (v) {
                           ref.read(themeProvider.notifier).state = AppTheme()
