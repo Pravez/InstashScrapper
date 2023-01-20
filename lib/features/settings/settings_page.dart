@@ -31,6 +31,25 @@ class SettingsPage extends ConsumerWidget {
               child: const Icon(FluentIcons.input_address)),
           controller: serverAddress,
           placeholder: "http://localhost",
+        ),
+        const SizedBox(height: 20,),
+        TextBox(
+          header: "Username",
+          prefix: Container(
+              margin: const EdgeInsets.only(left: 10),
+              child: const Icon(FluentIcons.people)),
+          controller: username,
+          placeholder: "Username",
+        ),
+        const SizedBox(height: 20,),
+        TextBox(
+          header: "Password",
+          prefix: Container(
+              margin: const EdgeInsets.only(left: 10),
+              child: const Icon(FluentIcons.password_field)),
+          controller: password,
+          obscureText: true,
+          placeholder: "password",
         )
       ],
     );

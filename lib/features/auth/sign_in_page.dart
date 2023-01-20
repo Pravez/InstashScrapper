@@ -1,22 +1,31 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:get_it/get_it.dart';
+import 'package:hive/hive.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:instash_scrapper/app/router.dart';
 import 'package:instash_scrapper/components/app_navigation.dart';
+import 'package:instash_scrapper/features/settings/settings_data.dart';
 import 'package:instash_scrapper/l10n/l10n.dart';
 import 'package:instash_scrapper/shared/app_exception.dart';
 import 'package:instash_scrapper/shared/utils.dart';
 
 import 'provider.dart';
 
-class SignInPage extends ConsumerWidget {
-  final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
-
-  SignInPage({Key? key}) : super(key: key);
+class SignInPage extends ConsumerStatefulWidget {
+  const SignInPage({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<ConsumerStatefulWidget> createState() => SignInPageState();
+}
+
+class SignInPageState extends ConsumerState<SignInPage> {
+  final _emailController = TextEditingController(text: GetIt.I.get<SettingsData>().username);
+  final _passwordController = TextEditingController(text: GetIt.I.get<SettingsData>().password);
+
+  bool _remember = false;
+
+  @override
+  Widget build(BuildContext context) {
     final authState = ref.watch(authProvider);
 
     return AppNavigation(
@@ -36,15 +45,39 @@ class SignInPage extends ConsumerWidget {
                           header: "Username",
                           placeholder: context.l10n.email_hint,
                           controller: _emailController,
+                        prefix: Container(
+                            margin: const EdgeInsets.only(left: 10),
+                            child: const Icon(FluentIcons.people)),
                           enabled: authState.maybeWhen(
                               loading: () => false, orElse: () => true),
                         ),
+                        const SizedBox(
+                          height: 10.0,
+                        ),
                         TextBox(
+                          header: "Password",
                           placeholder: context.l10n.password_hint,
                           controller: _passwordController,
+                          prefix: Container(
+                              margin: const EdgeInsets.only(left: 10),
+                              child: const Icon(FluentIcons.password_field)),
                           obscureText: true,
                           enabled: authState.maybeWhen(
                               loading: () => false, orElse: () => true),
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Checkbox(
+                                content: const Text("Remember me ?"),
+                                checked: _remember,
+                                onChanged: (v) => setState(() {
+                                      _remember = v ?? false;
+                                    }))
+                          ],
                         ),
                         Column(
                             crossAxisAlignment: CrossAxisAlignment.center,
@@ -55,14 +88,17 @@ class SignInPage extends ConsumerWidget {
                                         width: double.infinity,
                                         height: 30,
                                         child: Button(
-                                          onPressed: () => signInResult(
+                                          onPressed: () {
+                                            updateCredentialsMemory();
+                                            signInResult(
                                               context,
                                               ref
                                                   .read(authProvider.notifier)
                                                   .signIn(
                                                       _emailController.text,
                                                       _passwordController
-                                                          .text)),
+                                                          .text));
+                                          },
                                           child: Text(context.l10n.sign_in),
                                         ),
                                       ),
@@ -107,5 +143,24 @@ class SignInPage extends ConsumerWidget {
                     "Login failed : username or password incorrect",
                 orElse: () => "An error occured"),
             severity: InfoBarSeverity.error));
+
+  }
+
+  updateCredentialsMemory() {
+    if(_remember) {
+      GetIt.I
+          .get<SettingsData>()
+          .username = _emailController.text;
+      GetIt.I
+          .get<SettingsData>()
+          .password = _passwordController.text;
+    } else {
+      GetIt.I
+          .get<SettingsData>()
+          .username = "";
+      GetIt.I
+          .get<SettingsData>()
+          .password = "";
+    }
   }
 }
