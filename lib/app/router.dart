@@ -18,7 +18,8 @@ class AppRouteObserver extends AutoRouterObserver {
 
 @MaterialAutoRouter(replaceInRouteName: "Page,Route", routes: [
   AutoRoute(path: '/main', page: AppSkeletonPage),
-  AutoRoute(path: '/signIn', page: SignInPage, initial: true),
+  AutoRoute(path: '/loading', page: LoadingPage, initial: true),
+  AutoRoute(path: '/signIn', page: SignInPage),
   AutoRoute(path: '/settings', page: SettingsPage),
 ])
 class AppRouter extends _$AppRouter {}

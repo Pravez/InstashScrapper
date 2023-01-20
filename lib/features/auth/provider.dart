@@ -14,9 +14,13 @@ final authProvider = StateNotifierProvider<AuthProvider, AuthState>((ref) {
 });
 
 class AuthProvider extends StateNotifier<AuthState> {
-  AuthProvider(this._authRepository) : super(const AuthState.initial());
+  AuthProvider(this._authRepository) : super(const AuthState.initial()) {
+    check();
+  }
 
   final AuthRepository _authRepository;
+
+
 
   Future<AppException?> signIn(String email, String password) async {
     state = const AuthState.loading();
@@ -29,7 +33,7 @@ class AuthProvider extends StateNotifier<AuthState> {
     });
   }
 
-  Future<void> ignoreSignIn() {
+  Future<AppException?> ignoreSignIn() {
     state = const AuthState.notLoggedIn();
 
     return Future.value(null);

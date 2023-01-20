@@ -43,34 +43,27 @@ class HashtagsListViewState extends ConsumerState<HashtagsListView> {
       updateRows(hashtags);
     }
 
-    return Expanded(
-      child: Card(
-        child: PlutoGrid(
-          columns: columns,
-          rows: List<PlutoRow>.empty(),
-          onLoaded: (event) {
-            stateManager = event.stateManager;
-          },
-          onRowChecked: (e) {
-            if (e.row != null && e.isChecked != null) {
-              if (e.isChecked!) {
-                ref
-                    .read(selectionProvider.notifier)
-                    .update((state) => [...state, e.row!]);
-              } else {
-                ref.read(selectionProvider.notifier).state.remove(e.row!);
-              }
-            }
-          },
-          configuration: const PlutoGridConfiguration(
-            style: PlutoGridStyleConfig(
-              gridBackgroundColor: Colors.black38
-            ),
-              columnSize: PlutoGridColumnSizeConfig(
-                  autoSizeMode: PlutoAutoSizeMode.equal,
-                  resizeMode: PlutoResizeMode.pushAndPull)),
-        ),
-      ),
+    return PlutoGrid(
+      columns: columns,
+      rows: List<PlutoRow>.empty(),
+      onLoaded: (event) {
+        stateManager = event.stateManager;
+      },
+      onRowChecked: (e) {
+        if (e.row != null && e.isChecked != null) {
+          if (e.isChecked!) {
+            ref
+                .read(selectionProvider.notifier)
+                .update((state) => [...state, e.row!]);
+          } else {
+            ref.read(selectionProvider.notifier).state.remove(e.row!);
+          }
+        }
+      },
+      configuration: const PlutoGridConfiguration(
+          columnSize: PlutoGridColumnSizeConfig(
+              autoSizeMode: PlutoAutoSizeMode.equal,
+              resizeMode: PlutoResizeMode.pushAndPull)),
     );
   }
 

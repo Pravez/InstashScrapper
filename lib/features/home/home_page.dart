@@ -23,7 +23,7 @@ class HomePage extends HookConsumerWidget {
           placeholder: 'Ajouter un hashtag ...',
           enabled: loading.maybeWhen(loading: () => false, orElse: () => true),
         ),
-        const HashtagsListView()
+        const Expanded(child: HashtagsListView())
       ],
     );
   }

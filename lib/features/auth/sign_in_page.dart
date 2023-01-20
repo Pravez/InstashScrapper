@@ -55,26 +55,14 @@ class SignInPage extends ConsumerWidget {
                                         width: double.infinity,
                                         height: 30,
                                         child: Button(
-                                          onPressed: () {
-                                            ref
-                                                .read(authProvider.notifier)
-                                                .signIn(_emailController.text,
-                                                    _passwordController.text)
-                                                .onError((AppException error,
-                                                    stackTrace) {
-                                              context.showFluentInfoBar(
-                                                  title: "An error occured",
-                                                  message: error.maybeWhen(
-                                                      unauthorized: () =>
-                                                          "Login failed : username or password incorrect",
-                                                      orElse: () =>
-                                                          "An error occured"),
-                                                  severity:
-                                                      InfoBarSeverity.error);
-
-                                              return null;
-                                            });
-                                          },
+                                          onPressed: () => signInResult(
+                                              context,
+                                              ref
+                                                  .read(authProvider.notifier)
+                                                  .signIn(
+                                                      _emailController.text,
+                                                      _passwordController
+                                                          .text)),
                                           child: Text(context.l10n.sign_in),
                                         ),
                                       ),
@@ -92,12 +80,11 @@ class SignInPage extends ConsumerWidget {
                                 width: double.infinity,
                                 child: TextButton(
                                   onPressed: () {
-                                    ref
-                                        .read(authProvider.notifier)
-                                        .ignoreSignIn()
-                                        .then((value) => GetIt.I
-                                            .get<AppRouter>()
-                                            .navigateNamed("/main"));
+                                    signInResult(
+                                        context,
+                                        ref
+                                            .read(authProvider.notifier)
+                                            .ignoreSignIn());
                                   },
                                   child:
                                       const Text("Continue without signing in"),
@@ -108,5 +95,17 @@ class SignInPage extends ConsumerWidget {
                     ),
                   )
                 ])));
+  }
+
+  signInResult(BuildContext context, Future<AppException?> result) {
+    final router = GetIt.I.get<AppRouter>();
+    result.then((value) => router.navigateNamed("/main")).onError(
+        (AppException error, stackTrace) => context.showFluentInfoBar(
+            title: "An error occured",
+            message: error.maybeWhen(
+                unauthorized: () =>
+                    "Login failed : username or password incorrect",
+                orElse: () => "An error occured"),
+            severity: InfoBarSeverity.error));
   }
 }
