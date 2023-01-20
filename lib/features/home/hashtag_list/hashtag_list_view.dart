@@ -37,33 +37,36 @@ class HashtagsListViewState extends ConsumerState<HashtagsListView> {
   Widget build(BuildContext context) {
     final hashtags = ref.watch(hashtagListProvider).hashtags;
     final loading = ref.watch(hashtagListProvider).loading;
-    final theme = ref.watch(themeProvider);
 
     if (loading is! LoadingState) {
       updateRows(hashtags);
     }
 
-    return PlutoGrid(
-      columns: columns,
-      rows: List<PlutoRow>.empty(),
-      onLoaded: (event) {
-        stateManager = event.stateManager;
-      },
-      onRowChecked: (e) {
-        if (e.row != null && e.isChecked != null) {
-          if (e.isChecked!) {
-            ref
-                .read(selectionProvider.notifier)
-                .update((state) => [...state, e.row!]);
-          } else {
-            ref.read(selectionProvider.notifier).state.remove(e.row!);
-          }
-        }
-      },
-      configuration: const PlutoGridConfiguration(
-          columnSize: PlutoGridColumnSizeConfig(
-              autoSizeMode: PlutoAutoSizeMode.equal,
-              resizeMode: PlutoResizeMode.pushAndPull)),
+    return Expanded(
+      child: Material(
+        child: PlutoGrid(
+          columns: columns,
+          rows: [],
+          onLoaded: (event) {
+            stateManager = event.stateManager;
+          },
+          onRowChecked: (e) {
+            if (e.row != null && e.isChecked != null) {
+              if (e.isChecked!) {
+                ref
+                    .read(selectionProvider.notifier)
+                    .update((state) => [...state, e.row!]);
+              } else {
+                ref.read(selectionProvider.notifier).state.remove(e.row!);
+              }
+            }
+          },
+          configuration: const PlutoGridConfiguration(
+              columnSize: PlutoGridColumnSizeConfig(
+                  autoSizeMode: PlutoAutoSizeMode.equal,
+                  resizeMode: PlutoResizeMode.pushAndPull)),
+        ),
+      ),
     );
   }
 

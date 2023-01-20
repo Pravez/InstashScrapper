@@ -21,9 +21,14 @@ class HomePage extends HookConsumerWidget {
             border: Border.all(width: 1.0),
           ),
           placeholder: 'Ajouter un hashtag ...',
+          suffix: loading.maybeWhen(loading: () => const ProgressRing(), orElse: () => null),
+          prefix: Container(
+              margin: const EdgeInsets.only(left: 10),
+              child: const Icon(FluentIcons.search_and_apps)),
           enabled: loading.maybeWhen(loading: () => false, orElse: () => true),
         ),
-        const Expanded(child: HashtagsListView())
+        const SizedBox(height: 10.0,),
+        const HashtagsListView()
       ],
     );
   }

@@ -1,6 +1,8 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:instash_scrapper/app/app.dart';
 import 'package:instash_scrapper/features/settings/provider.dart';
 import 'package:instash_scrapper/features/settings/settings_data.dart';
 import 'package:settings_ui/settings_ui.dart';
@@ -19,37 +21,18 @@ class SettingsPage extends ConsumerWidget {
     username.text = settingsData.username;
     password.text = settingsData.password;
 
-    return Scaffold(
-      appBar: AppBar(
-        leading: BackButton(
-          onPressed: () => AutoRouter.of(context).navigateBack(),
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => validateAndClose(context, ref, settingsData),
-        child: const Icon(Icons.check),
-      ),
-      body: SettingsList(
-        sections: [
-          SettingsSection(
-            title: const Text("Server configuration"),
-            tiles: [
-              CustomSettingsTile(
-                  child: TextField(
-                      cursorColor: Colors.grey,
-                      controller: serverAddress,
-                      decoration: const InputDecoration(
-                          filled: true,
-                          border:
-                              OutlineInputBorder(borderSide: BorderSide.none),
-                          hintText: 'Addresse du serveur',
-                          hintStyle:
-                              TextStyle(color: Colors.grey, fontSize: 18),
-                          prefixIcon: Icon(Icons.edit_location_alt))))
-            ],
-          )
-        ],
-      ),
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        TextBox(
+          header: "Adresse du serveur",
+          prefix: Container(
+              margin: const EdgeInsets.only(left: 10),
+              child: const Icon(FluentIcons.input_address)),
+          controller: serverAddress,
+          placeholder: "http://localhost",
+        )
+      ],
     );
   }
 

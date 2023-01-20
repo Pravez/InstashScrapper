@@ -1,7 +1,10 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter/foundation.dart';
+import 'package:get_it/get_it.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:instash_scrapper/app/app.dart';
+import 'package:instash_scrapper/app/router.dart';
+import 'package:instash_scrapper/features/settings/settings_page.dart';
 import 'package:instash_scrapper/theme.dart';
 import 'package:window_manager/window_manager.dart';
 
@@ -14,7 +17,10 @@ class AppNavigationPaneItem {
   final Icon icon;
 
   AppNavigationPaneItem(
-      {required this.title, required this.contentWidget, required this.icon, this.contentHeader});
+      {required this.title,
+      required this.contentWidget,
+      required this.icon,
+      this.contentHeader});
 }
 
 class AppNavigation extends ConsumerWidget {
@@ -35,14 +41,14 @@ class AppNavigation extends ConsumerWidget {
             automaticallyImplyLeading: false,
             title: kIsWeb
                 ? const Align(
-              alignment: AlignmentDirectional.centerStart,
-              child: Text("InstashScrapper"),
-            )
+                    alignment: AlignmentDirectional.centerStart,
+                    child: Text("InstashScrapper"),
+                  )
                 : const DragToMoveArea(
-                child: Align(
-                  alignment: AlignmentDirectional.centerStart,
-                  child: Text("InstashScrapper"),
-                )),
+                    child: Align(
+                    alignment: AlignmentDirectional.centerStart,
+                    child: Text("InstashScrapper"),
+                  )),
             actions: Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
@@ -52,14 +58,10 @@ class AppNavigation extends ConsumerWidget {
                       checked: themeState.mode == ThemeMode.dark,
                       onChanged: (v) {
                         if (v) {
-                          ref
-                              .read(themeProvider.notifier)
-                              .state = AppTheme()
+                          ref.read(themeProvider.notifier).state = AppTheme()
                             ..mode = ThemeMode.dark;
                         } else {
-                          ref
-                              .read(themeProvider.notifier)
-                              .state = AppTheme()
+                          ref.read(themeProvider.notifier).state = AppTheme()
                             ..mode = ThemeMode.light;
                         }
                       }),
@@ -77,22 +79,37 @@ class AppNavigation extends ConsumerWidget {
             )),
         pane: panes != null
             ? NavigationPane(
-            selected: navigationState,
-            onChanged: (index) =>
-                ref
+                selected: navigationState,
+                onChanged: (index) => ref
                     .read(navigationProvider.notifier)
                     .update((state) => state = index),
-            displayMode: PaneDisplayMode.compact,
-            items: panes!
-                .map((e) =>
-                PaneItem(
-                    icon: e.icon,
-                    title: Text(e.title),
-                    body: _NavigationBodyItem(
-                      header: e.contentHeader,
-                      content: e.contentWidget,
-                    )))
-                .toList().cast<NavigationPaneItem>())
+                displayMode: PaneDisplayMode.compact,
+                footerItems: [
+                  PaneItem(
+                      icon: const Icon(FluentIcons.sign_out),
+                      body: Container(),
+
+                      onTap: () {
+                        ref.read(navigationProvider.notifier).update((state) => state = 0);
+                        GetIt.I.get<AppRouter>().navigateNamed("/signIn");
+                      }),
+                  PaneItem(
+                      icon: const Icon(FluentIcons.settings),
+                      title: const Text("Settings"),
+                      body: _NavigationBodyItem(
+                        content: SettingsPage(),
+                      ))
+                ],
+                items: panes!
+                    .map((e) => PaneItem(
+                        icon: e.icon,
+                        title: Text(e.title),
+                        body: _NavigationBodyItem(
+                          header: e.contentHeader,
+                          content: e.contentWidget,
+                        )))
+                    .toList()
+                    .cast<NavigationPaneItem>())
             : null,
         content: content);
   }
