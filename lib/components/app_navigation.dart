@@ -10,17 +10,21 @@ import 'package:window_manager/window_manager.dart';
 
 final navigationProvider = StateProvider((ref) => 0);
 
+typedef WidgetRefCallback = void Function(WidgetRef ref);
+
 class AppNavigationPaneItem {
   final String title;
   final String? contentHeader;
   final Widget contentWidget;
   final Icon icon;
+  final WidgetRefCallback? onTap;
 
   AppNavigationPaneItem(
       {required this.title,
       required this.contentWidget,
       required this.icon,
-      this.contentHeader});
+      this.contentHeader,
+      this.onTap});
 }
 
 class AppNavigation extends ConsumerWidget {
@@ -104,6 +108,7 @@ class AppNavigation extends ConsumerWidget {
                     .map((e) => PaneItem(
                         icon: e.icon,
                         title: Text(e.title),
+                        onTap: e.onTap != null ? () => e.onTap!(ref) : null,
                         body: _NavigationBodyItem(
                           header: e.contentHeader,
                           content: e.contentWidget,

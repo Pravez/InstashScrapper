@@ -14,6 +14,23 @@ class HomePage extends HookConsumerWidget {
 
     return Column(
       children: [
+        CommandBar(primaryItems: [
+          CommandBarButton(
+              icon: const Icon(FluentIcons.database_refresh),
+              label: const Text("Mettre à jour les indices"),
+              onPressed: () {
+                ref.read(hashtagListProvider.notifier).forceHashtagsRefresh();
+              }),
+          CommandBarButton(
+              icon: const Icon(FluentIcons.refresh),
+              label: const Text("Rafraîchir le visuel"),
+              onPressed: () {
+                ref.read(hashtagListProvider.notifier).refresh();
+              })
+        ]),
+        const SizedBox(
+          height: 20,
+        ),
         TextBox(
           onSubmitted: (value) => onSubmit(context, value, ref),
           cursorColor: Colors.grey,

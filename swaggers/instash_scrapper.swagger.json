@@ -107,6 +107,11 @@
         "operationId": "get_hashtags",
         "parameters": [
           {
+            "name": "refresh",
+            "in": "query",
+            "type": "boolean"
+          },
+          {
             "name": "X-Fields",
             "in": "header",
             "type": "string",

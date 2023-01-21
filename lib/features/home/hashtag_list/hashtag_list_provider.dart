@@ -14,7 +14,7 @@ class HashtagListNotifier extends StateNotifier<HashtagListState> {
 
   final Ref ref;
 
-  void refresh() async {
+  Future<void> refresh() async {
     state = state.copyWith(loading: const Loading.loading());
     final hashtags = await ref
         .read(apiProvider)
@@ -43,5 +43,18 @@ class HashtagListNotifier extends StateNotifier<HashtagListState> {
 
       return Future.error("Connection refused");
     }
+  }
+
+  forceHashtagsRefresh() async {
+    final client = ref.read(apiProvider);
+    state = state.copyWith(loading: const Loading.loading());
+    await Future.wait(state.hashtags
+            .map((e) async => client.hashtagsNameGet(name: e.name, refresh: true)))
+        .onError((error, stackTrace) {
+      state = state.copyWith(loading: Loading.error(error));
+
+      return List.empty();
+    });
+    refresh();
   }
 }

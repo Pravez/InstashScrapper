@@ -19,8 +19,12 @@ class SignInPage extends ConsumerStatefulWidget {
 }
 
 class SignInPageState extends ConsumerState<SignInPage> {
-  final _emailController = TextEditingController(text: GetIt.I.get<SettingsData>().username);
-  final _passwordController = TextEditingController(text: GetIt.I.get<SettingsData>().password);
+  final _emailController = TextEditingController(text: GetIt.I
+      .get<SettingsData>()
+      .username);
+  final _passwordController = TextEditingController(text: GetIt.I
+      .get<SettingsData>()
+      .password);
 
   bool _remember = false;
 
@@ -45,9 +49,9 @@ class SignInPageState extends ConsumerState<SignInPage> {
                           header: "Username",
                           placeholder: context.l10n.email_hint,
                           controller: _emailController,
-                        prefix: Container(
-                            margin: const EdgeInsets.only(left: 10),
-                            child: const Icon(FluentIcons.people)),
+                          prefix: Container(
+                              margin: const EdgeInsets.only(left: 10),
+                              child: const Icon(FluentIcons.people)),
                           enabled: authState.maybeWhen(
                               loading: () => false, orElse: () => true),
                         ),
@@ -74,7 +78,8 @@ class SignInPageState extends ConsumerState<SignInPage> {
                             Checkbox(
                                 content: const Text("Remember me ?"),
                                 checked: _remember,
-                                onChanged: (v) => setState(() {
+                                onChanged: (v) =>
+                                    setState(() {
                                       _remember = v ?? false;
                                     }))
                           ],
@@ -84,31 +89,33 @@ class SignInPageState extends ConsumerState<SignInPage> {
                             children: <Widget>[
                               const SizedBox(height: 30),
                               authState.maybeWhen(
-                                  orElse: () => SizedBox(
+                                  orElse: () =>
+                                      SizedBox(
                                         width: double.infinity,
                                         height: 30,
                                         child: Button(
                                           onPressed: () {
                                             updateCredentialsMemory();
                                             signInResult(
-                                              context,
-                                              ref
-                                                  .read(authProvider.notifier)
-                                                  .signIn(
-                                                      _emailController.text,
-                                                      _passwordController
-                                                          .text));
+                                                context,
+                                                ref
+                                                    .read(authProvider.notifier)
+                                                    .signIn(
+                                                    _emailController.text,
+                                                    _passwordController
+                                                        .text));
                                           },
                                           child: Text(context.l10n.sign_in),
                                         ),
                                       ),
-                                  loading: () => const SizedBox(
-                                        width: 30,
-                                        height: 30,
-                                        child: ProgressRing(
-                                          strokeWidth: 3,
-                                        ),
-                                      )),
+                                  loading: () =>
+                                  const SizedBox(
+                                    width: 30,
+                                    height: 30,
+                                    child: ProgressRing(
+                                      strokeWidth: 3,
+                                    ),
+                                  )),
                               const SizedBox(
                                 height: 30,
                               ),
@@ -123,7 +130,7 @@ class SignInPageState extends ConsumerState<SignInPage> {
                                             .ignoreSignIn());
                                   },
                                   child:
-                                      const Text("Continue without signing in"),
+                                  const Text("Continue without signing in"),
                                 ),
                               )
                             ]),
@@ -136,31 +143,25 @@ class SignInPageState extends ConsumerState<SignInPage> {
   signInResult(BuildContext context, Future<AppException?> result) {
     final router = GetIt.I.get<AppRouter>();
     result.then((value) => router.navigateNamed("/main")).onError(
-        (AppException error, stackTrace) => context.showFluentInfoBar(
-            title: "An error occured",
-            message: error.maybeWhen(
-                unauthorized: () =>
+            (AppException error, stackTrace) =>
+            context.showFluentInfoBar(
+                title: "An error occured",
+                message: error.maybeWhen(
+                    unauthorized: () =>
                     "Login failed : username or password incorrect",
-                orElse: () => "An error occured"),
-            severity: InfoBarSeverity.error));
-
+                    orElse: () => "An error occured"),
+                severity: InfoBarSeverity.error));
   }
 
   updateCredentialsMemory() {
-    if(_remember) {
-      GetIt.I
-          .get<SettingsData>()
-          .username = _emailController.text;
-      GetIt.I
-          .get<SettingsData>()
-          .password = _passwordController.text;
+    final data = GetIt.I.get<SettingsData>();
+    if (_remember) {
+      data.username = _emailController.text;
+      data.password = _passwordController.text;
     } else {
-      GetIt.I
-          .get<SettingsData>()
-          .username = "";
-      GetIt.I
-          .get<SettingsData>()
-          .password = "";
+      data.username = "";
+      data.password = "";
     }
+    data.save();
   }
 }

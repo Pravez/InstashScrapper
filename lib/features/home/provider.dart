@@ -8,20 +8,9 @@ final homeProvider =
     StateNotifierProvider<HomeProvider, HomeState>((ref) => HomeProvider(ref));
 
 class HomeProvider extends StateNotifier<HomeState> {
-  HomeProvider(this._ref) : super(const HomeState.loading()) {
-    _init();
-  }
+  HomeProvider(this._ref) : super(const HomeState.loading());
 
   final Ref _ref;
-
-  _init() async {
-    _ref.listen(authProvider, (previous, next) {
-      next.maybeWhen(
-          loggedIn: () => _ref.read(hashtagListProvider.notifier).refresh(),
-          notLoggedIn: () => _ref.read(hashtagListProvider.notifier).refresh(),
-          orElse: () {});
-    });
-  }
 
   Future<void> logout() async {
     state = const HomeState.loggedOut();
