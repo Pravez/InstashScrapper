@@ -35,12 +35,16 @@ class AuthRepository implements AuthRepositoryProtocol {
 
   @override
   Future<AuthState> check() async {
-    return _client
-        .statusGet()
-        .asStream()
-        .map((event) => event.isSuccessful && event.body!.loggedIn!
-            ? const AuthState.loggedIn()
-            : const AuthState.error(AppException.unauthorized()))
-        .first;
+      return _client
+          .statusGet()
+          .asStream()
+          .map((event) =>
+      event.isSuccessful && event.body!.loggedIn!
+          ? const AuthState.loggedIn()
+          : const AuthState.error(AppException.unauthorized()))
+          .first
+      .catchError((error) {
+        return AuthState.error(AppException.errorWithMessage(error.toString()));
+      });
   }
 }

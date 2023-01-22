@@ -1,3 +1,4 @@
+import 'package:cryptography_flutter/cryptography_flutter.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_acrylic/flutter_acrylic.dart' as flutter_acrylic;
 import 'package:get_it/get_it.dart';
@@ -9,6 +10,7 @@ import 'package:system_theme/system_theme.dart';
 import 'package:window_manager/window_manager.dart';
 
 Future<void> init() async {
+  FlutterCryptography.enable();
   GetIt.I.registerSingleton<AppRouter>(AppRouter());
 
   await Hive.initFlutter();

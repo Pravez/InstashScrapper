@@ -31,8 +31,11 @@ class SettingsPage extends ConsumerWidget {
               child: const Icon(FluentIcons.input_address)),
           controller: serverAddress,
           placeholder: "http://localhost",
+          onSubmitted: (_) => validate(ref, settingsData),
         ),
-        const SizedBox(height: 20,),
+        const SizedBox(
+          height: 20,
+        ),
         TextBox(
           header: "Username",
           prefix: Container(
@@ -40,8 +43,11 @@ class SettingsPage extends ConsumerWidget {
               child: const Icon(FluentIcons.people)),
           controller: username,
           placeholder: "Username",
+          onSubmitted: (_) => validate(ref, settingsData),
         ),
-        const SizedBox(height: 20,),
+        const SizedBox(
+          height: 20,
+        ),
         TextBox(
           header: "Password",
           prefix: Container(
@@ -50,15 +56,18 @@ class SettingsPage extends ConsumerWidget {
           controller: password,
           obscureText: true,
           placeholder: "password",
+          onSubmitted: (_) => validate(ref, settingsData),
         )
       ],
     );
   }
 
-  validateAndClose(BuildContext context, WidgetRef ref, SettingsData data) {
+  validate(WidgetRef ref, SettingsData data) {
+    data.serverAddress = serverAddress.text;
+    data.username = username.text;
+    data.password = password.text;
+
     data.save();
     ref.read(settingsProvider.notifier).state = data;
-
-    AutoRouter.of(context).navigateBack();
   }
 }

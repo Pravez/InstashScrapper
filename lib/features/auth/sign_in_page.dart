@@ -25,6 +25,9 @@ class SignInPageState extends ConsumerState<SignInPage> {
   final _passwordController = TextEditingController(text: GetIt.I
       .get<SettingsData>()
       .password);
+  final _addressController = TextEditingController(text: GetIt.I
+      .get<SettingsData>()
+      .serverAddress);
 
   bool _remember = false;
 
@@ -45,6 +48,19 @@ class SignInPageState extends ConsumerState<SignInPage> {
                   Form(
                     child: Column(
                       children: [
+                        TextBox(
+                          header: "Server address",
+                          placeholder: "http://...",
+                          controller: _addressController,
+                          prefix: Container(
+                              margin: const EdgeInsets.only(left: 10),
+                              child: const Icon(FluentIcons.server)),
+                          enabled: authState.maybeWhen(
+                              loading: () => false, orElse: () => true),
+                        ),
+                        const SizedBox(
+                          height: 10.0,
+                        ),
                         TextBox(
                           header: "Username",
                           placeholder: context.l10n.email_hint,
@@ -123,6 +139,7 @@ class SignInPageState extends ConsumerState<SignInPage> {
                                 width: double.infinity,
                                 child: TextButton(
                                   onPressed: () {
+                                    updateCredentialsMemory();
                                     signInResult(
                                         context,
                                         ref
@@ -158,6 +175,7 @@ class SignInPageState extends ConsumerState<SignInPage> {
     if (_remember) {
       data.username = _emailController.text;
       data.password = _passwordController.text;
+      data.serverAddress = _addressController.text;
     } else {
       data.username = "";
       data.password = "";
