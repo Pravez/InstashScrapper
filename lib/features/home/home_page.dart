@@ -33,7 +33,6 @@ class HomePage extends HookConsumerWidget {
         ),
         TextBox(
           onSubmitted: (value) => onSubmit(context, value, ref),
-          cursorColor: Colors.grey,
           decoration: BoxDecoration(
             border: Border.all(width: 1.0),
           ),

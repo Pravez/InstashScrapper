@@ -20,6 +20,7 @@ class HashtagTimeline extends ConsumerWidget {
         primaryXAxis: DateTimeAxis(dateFormat: DateFormat.yMd("fr")),
         primaryYAxis: NumericAxis(/*minimum: max *0.9, maximum: max * 1.1*/),
         tooltipBehavior: TooltipBehavior(
+          header: data.first.name,
       enable: true,
         ),
         title: ChartTitle(
