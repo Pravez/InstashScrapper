@@ -37,6 +37,8 @@ dependencies:
   pluto_grid: ^5.4.9
   cupertino_icons: ^1.0.5
   system_theme: ^2.1.0
+  syncfusion_flutter_charts: ^20.4.44
+  syncfusion_flutter_datagrid: ^20.4.44
 
 
 dev_dependencies:

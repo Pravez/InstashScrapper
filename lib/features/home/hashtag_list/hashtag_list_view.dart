@@ -20,7 +20,6 @@ class HashtagsListViewState extends ConsumerState<HashtagsListView> {
         title: "Name",
         field: "name",
         type: PlutoColumnType.text(),
-        enableRowChecked: true,
         enableEditingMode: false),
     PlutoColumn(
         title: "Media Count",

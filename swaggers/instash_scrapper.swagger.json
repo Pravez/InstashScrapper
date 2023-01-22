@@ -124,6 +124,42 @@
         ]
       }
     },
+    "/hashtags/{name}/history": {
+      "parameters": [
+        {
+          "name": "name",
+          "in": "path",
+          "required": true,
+          "type": "string"
+        }
+      ],
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/HashtagCheck"
+              }
+            }
+          }
+        },
+        "operationId": "get_hashtags_history",
+        "parameters": [
+          {
+            "name": "X-Fields",
+            "in": "header",
+            "type": "string",
+            "format": "mask",
+            "description": "An optional fields mask"
+          }
+        ],
+        "tags": [
+          "default"
+        ]
+      }
+    },
     "/hashtags/{name}/related": {
       "parameters": [
         {

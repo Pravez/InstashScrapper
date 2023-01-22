@@ -13,12 +13,10 @@ class AppSkeletonPage extends ConsumerWidget {
         title: "Home",
         contentWidget: const HomePage(),
         icon: const Icon(FluentIcons.home),
-        onTap: (WidgetRef ref) {
-
-        }),
+        onTap: (WidgetRef ref) {}),
     AppNavigationPaneItem(
         title: "Search",
-        contentWidget: const SearchPage(),
+        contentWidget: SearchPage(),
         icon: const Icon(FluentIcons.search)),
   ];
 
