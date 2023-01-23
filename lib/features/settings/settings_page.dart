@@ -68,6 +68,6 @@ class SettingsPage extends ConsumerWidget {
     data.password = password.text;
 
     data.save();
-    ref.read(settingsProvider.notifier).state = data;
+    ref.read(settingsProvider.notifier).update((state) => state = data);
   }
 }

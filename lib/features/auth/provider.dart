@@ -33,13 +33,13 @@ class AuthProvider extends StateNotifier<AuthState> {
     });
   }
 
-  Future<AppException?> ignoreSignIn() {
-    state = const AuthState.notLoggedIn();
-
-    return Future.value(null);
+  check() async {
+    state = const AuthState.loading();
+    state = await _authRepository.check();
   }
 
-  check() async {
-    state = await _authRepository.check();
+  canReachServer() async {
+    state = const AuthState.loading();
+    state = await _authRepository.canReachServer();
   }
 }

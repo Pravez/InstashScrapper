@@ -9,6 +9,8 @@ abstract class AuthRepositoryProtocol {
   Future<AuthState> signIn(String email, String password);
 
   Future<AuthState> check();
+
+  Future<AuthState> canReachServer();
 }
 
 final authRepositoryProvider = Provider((ref) {
@@ -35,16 +37,31 @@ class AuthRepository implements AuthRepositoryProtocol {
 
   @override
   Future<AuthState> check() async {
-      return _client
-          .statusGet()
-          .asStream()
-          .map((event) =>
-      event.isSuccessful && event.body!.loggedIn!
-          ? const AuthState.loggedIn()
-          : const AuthState.error(AppException.unauthorized()))
-          .first
-      .catchError((error) {
-        return AuthState.error(AppException.errorWithMessage(error.toString()));
-      });
+    return _client
+        .statusGet()
+        .asStream()
+        .map((event) => event.isSuccessful && event.body!.loggedIn!
+            ? const AuthState.loggedIn()
+            : const AuthState.error(AppException.unauthorized()))
+        .first
+        .catchError((error) {
+      return AuthState.error(AppException.errorWithMessage(error.toString()));
+    });
+  }
+
+  @override
+  Future<AuthState> canReachServer() {
+    return _client
+        .statusGet()
+        .asStream()
+        .map((event) => event.isSuccessful
+            ? event.body!.loggedIn!
+                ? const AuthState.loggedIn()
+                : const AuthState.notLoggedIn()
+            : const AuthState.error(AppException.connectivity()))
+        .first
+        .catchError((error) {
+      return AuthState.error(AppException.errorWithMessage(error.toString()));
+    });
   }
 }

@@ -4,6 +4,7 @@ import 'package:hive/hive.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:instash_scrapper/app/router.dart';
 import 'package:instash_scrapper/components/app_navigation.dart';
+import 'package:instash_scrapper/features/settings/provider.dart';
 import 'package:instash_scrapper/features/settings/settings_data.dart';
 import 'package:instash_scrapper/l10n/l10n.dart';
 import 'package:instash_scrapper/shared/app_exception.dart';
@@ -19,17 +20,8 @@ class SignInPage extends ConsumerStatefulWidget {
 }
 
 class SignInPageState extends ConsumerState<SignInPage> {
-  final _emailController = TextEditingController(text: GetIt.I
-      .get<SettingsData>()
-      .username);
-  final _passwordController = TextEditingController(text: GetIt.I
-      .get<SettingsData>()
-      .password);
-  final _addressController = TextEditingController(text: GetIt.I
-      .get<SettingsData>()
-      .serverAddress);
-
-  bool _remember = false;
+  final _addressController =
+      TextEditingController(text: GetIt.I.get<SettingsData>().serverAddress);
 
   @override
   Widget build(BuildContext context) {
@@ -58,98 +50,33 @@ class SignInPageState extends ConsumerState<SignInPage> {
                           enabled: authState.maybeWhen(
                               loading: () => false, orElse: () => true),
                         ),
-                        const SizedBox(
-                          height: 10.0,
-                        ),
-                        TextBox(
-                          header: "Username",
-                          placeholder: context.l10n.email_hint,
-                          controller: _emailController,
-                          prefix: Container(
-                              margin: const EdgeInsets.only(left: 10),
-                              child: const Icon(FluentIcons.people)),
-                          enabled: authState.maybeWhen(
-                              loading: () => false, orElse: () => true),
-                        ),
-                        const SizedBox(
-                          height: 10.0,
-                        ),
-                        TextBox(
-                          header: "Password",
-                          placeholder: context.l10n.password_hint,
-                          controller: _passwordController,
-                          prefix: Container(
-                              margin: const EdgeInsets.only(left: 10),
-                              child: const Icon(FluentIcons.password_field)),
-                          obscureText: true,
-                          enabled: authState.maybeWhen(
-                              loading: () => false, orElse: () => true),
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            Checkbox(
-                                content: const Text("Remember me ?"),
-                                checked: _remember,
-                                onChanged: (v) =>
-                                    setState(() {
-                                      _remember = v ?? false;
-                                    }))
-                          ],
-                        ),
                         Column(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: <Widget>[
                               const SizedBox(height: 30),
                               authState.maybeWhen(
-                                  orElse: () =>
-                                      SizedBox(
+                                  orElse: () => SizedBox(
                                         width: double.infinity,
                                         height: 30,
                                         child: Button(
                                           onPressed: () {
-                                            updateCredentialsMemory();
+                                            updateServerAddress(ref);
                                             signInResult(
                                                 context,
                                                 ref
                                                     .read(authProvider.notifier)
-                                                    .signIn(
-                                                    _emailController.text,
-                                                    _passwordController
-                                                        .text));
+                                                    .canReachServer());
                                           },
                                           child: Text(context.l10n.sign_in),
                                         ),
                                       ),
-                                  loading: () =>
-                                  const SizedBox(
-                                    width: 30,
-                                    height: 30,
-                                    child: ProgressRing(
-                                      strokeWidth: 3,
-                                    ),
-                                  )),
-                              const SizedBox(
-                                height: 30,
-                              ),
-                              SizedBox(
-                                width: double.infinity,
-                                child: TextButton(
-                                  onPressed: () {
-                                    updateCredentialsMemory();
-                                    signInResult(
-                                        context,
-                                        ref
-                                            .read(authProvider.notifier)
-                                            .ignoreSignIn());
-                                  },
-                                  child:
-                                  const Text("Continue without signing in"),
-                                ),
-                              )
+                                  loading: () => const SizedBox(
+                                        width: 30,
+                                        height: 30,
+                                        child: ProgressRing(
+                                          strokeWidth: 3,
+                                        ),
+                                      )),
                             ]),
                       ],
                     ),
@@ -160,26 +87,19 @@ class SignInPageState extends ConsumerState<SignInPage> {
   signInResult(BuildContext context, Future<AppException?> result) {
     final router = GetIt.I.get<AppRouter>();
     result.then((value) => router.navigateNamed("/main")).onError(
-            (AppException error, stackTrace) =>
-            context.showFluentInfoBar(
-                title: "An error occured",
-                message: error.maybeWhen(
-                    unauthorized: () =>
+        (AppException error, stackTrace) => context.showFluentInfoBar(
+            title: "An error occured",
+            message: error.maybeWhen(
+                unauthorized: () =>
                     "Login failed : username or password incorrect",
-                    orElse: () => "An error occured"),
-                severity: InfoBarSeverity.error));
+                orElse: () => "An error occured"),
+            severity: InfoBarSeverity.error));
   }
 
-  updateCredentialsMemory() {
-    final data = GetIt.I.get<SettingsData>();
-    if (_remember) {
-      data.username = _emailController.text;
-      data.password = _passwordController.text;
-      data.serverAddress = _addressController.text;
-    } else {
-      data.username = "";
-      data.password = "";
-    }
+  updateServerAddress(WidgetRef ref) {
+    final data = ref.read(settingsProvider);
+    data.serverAddress = _addressController.text;
     data.save();
+    ref.read(settingsProvider.notifier).update((state) => state = data);
   }
 }
